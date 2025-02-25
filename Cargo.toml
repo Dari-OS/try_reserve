@@ -1,6 +1,7 @@
 [package]
 name = "try_reserve"
 authors = ["Dari-OS <darius.dev@proton.me>"]
+description = " Stable implementation of the TryReserveError from std for custom collections"
 readme = "README.md"
 repository = "https://github.com/Dari-OS/try_reserve"
 license = "MIT OR Apache-2.0"
