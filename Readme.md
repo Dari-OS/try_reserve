@@ -84,15 +84,20 @@ An enum with the following variants:
 
 When not in a `no_std` environment, the crate provides conversions between its error types and the standard library's error types:
 
-```rust
+```rust        
 use try_reserve::error::TryReserveError;
 
 // Convert from std to this crate's error type
-let std_error = std::collections::TryReserveError::new();
+let std_error = Vec::<i32>::with_capacity(100)
+    .try_reserve(usize::MAX)
+    .unwrap_err();
 let our_error = TryReserveError::from(std_error);
+// or
+// let our_error: TryReserveError = std_error.into();
 
 // And back again
 let std_error_again = std::collections::TryReserveError::from(our_error);
+
 ```
 
 ## Why this crate exists
