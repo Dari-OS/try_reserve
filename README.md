@@ -29,7 +29,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-try_reserve = "0.1.0"
+try_reserve = "0.1"
 ```
 
 ### Basic usage
@@ -39,7 +39,7 @@ use try_reserve::{TryReserve, error::{TryReserveError, TryReserveErrorKind}};
 
 // Implement the TryReserve trait for your custom collection
 struct MyCollection<T> {
-data: Vec<T>,
+    data: Vec<T>,
 }
 
 impl<T> TryReserve for MyCollection<T> {
@@ -64,7 +64,7 @@ To use this crate in a `no_std` environment, enable the `no_std` feature:
 
 ```toml
 [dependencies]
-try_reserve = { version = "0.1.0", features = ["no_std"] }
+try_reserve = { version = "0.1", features = ["no_std"] }
 ```
 
 ## Error Types
@@ -84,7 +84,7 @@ An enum with the following variants:
 
 When not in a `no_std` environment, the crate provides conversions between its error types and the standard library's error types:
 
-```rust        
+```rust
 use try_reserve::error::TryReserveError;
 
 // Convert from std to this crate's error type
