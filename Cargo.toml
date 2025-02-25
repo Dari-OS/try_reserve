@@ -1,0 +1,12 @@
+[package]
+name = "try_reserve"
+# Befor changing this change the version value under Usage in the Readme.md
+version = "0.1.0"
+# TODO: Update to `2024` when the nixos repo has the corresponding rust version (1.85.0)
+edition = "2021"
+
+[dependencies]
+
+
+[features]
+no_std = []
