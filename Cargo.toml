@@ -1,11 +1,15 @@
 [package]
 name = "try_reserve"
+authors = ["Dari-OS <darius.dev@proton.me>"]
+readme = "README.md"
+repository = "https://github.com/Dari-OS/try_reserve"
+license = "MIT OR Apache-2.0"
+categories = ["no-std", "no-std::no-alloc", "data-structures"]
+keywords = ["no-std", "stabilization", "reserve", "try_reserve", "trait"]
 # Befor changing this change the version value under Usage in the Readme.md
 version = "0.1.0"
 # TODO: Update to `2024` when the nixos repo has the corresponding rust version (1.85.0)
 edition = "2021"
-
-[dependencies]
 
 
 [features]
