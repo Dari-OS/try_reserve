@@ -66,6 +66,15 @@ impl From<LayoutError> for TryReserveErrorKind {
     }
 }
 
+impl From<LayoutError> for TryReserveError {
+    /// Always evaluates to [`TryReserveErrorKind::CapacityOverflow`].
+    fn from(_: LayoutError) -> Self {
+        TryReserveError {
+            kind: TryReserveErrorKind::CapacityOverflow,
+        }
+    }
+}
+
 #[cfg(not(feature = "no_std"))]
 impl From<std::collections::TryReserveError> for TryReserveError {
     fn from(value: std::collections::TryReserveError) -> Self {

@@ -306,6 +306,7 @@ mod custom_impl_tests {
 #[cfg(not(feature = "no_std"))]
 mod edge_case_tests {
     use super::*;
+    use std::collections::HashMap;
 
     #[test]
     fn test_zero_reservation() {
