@@ -7,23 +7,34 @@ use core::{
 use core::mem::transmute;
 
 /// The error type for `try_reserve` methods.
+/// 
+/// This error is returned when memory allocation fails or when the capacity
+/// exceeds collection-specific limits.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct TryReserveError {
     kind: TryReserveErrorKind,
 }
 
 impl TryReserveError {
+    /// Returns the kind of allocation error that occurred.
     #[inline]
     #[allow(dead_code)]
     pub fn kind(&self) -> TryReserveErrorKind {
         self.kind.clone()
     }
 
+    /// Converts a standard library `TryReserveError` into this crate's version.
+    /// 
+    /// This is only available when the `no_std` feature is not enabled.
     #[cfg(not(feature = "no_std"))]
     pub fn from_std(error: std::collections::TryReserveError) -> Self {
         Self::from(error)
     }
 
+    /// Converts a `Result` containing a standard library `TryReserveError` into a `Result`
+    /// with this crate's version of `TryReserveError`.
+    /// 
+    /// This is only available when the `no_std` feature is not enabled.
     #[cfg(not(feature = "no_std"))]
     pub fn from_std_result<T>(
         result: Result<T, std::collections::TryReserveError>,
@@ -32,7 +43,7 @@ impl TryReserveError {
     }
 }
 
-/// Details of the allocation that caused a `TryReserveError`
+/// Details of the allocation that caused a `TryReserveError`.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum TryReserveErrorKind {
     /// Error due to the computed capacity exceeding the collection's maximum
@@ -45,13 +56,15 @@ pub enum TryReserveErrorKind {
         /// The layout of allocation request that failed
         layout: Layout,
 
-        // The std has this field for some future rfc: https://github.com/rust-lang/wg-allocators/issues/23"
-        // I have to add it for the transmute methode
+        /// Reserved field for future compatibility with the standard library.
+        /// This aligns with an RFC for future allocator error handling:
+        /// https://github.com/rust-lang/wg-allocators/issues/23
         non_exhaustive: (),
     },
 }
 
 impl From<TryReserveErrorKind> for TryReserveError {
+    /// Creates a `TryReserveError` from a `TryReserveErrorKind`.
     #[inline]
     fn from(kind: TryReserveErrorKind) -> Self {
         Self { kind }
@@ -60,6 +73,8 @@ impl From<TryReserveErrorKind> for TryReserveError {
 
 impl From<LayoutError> for TryReserveErrorKind {
     /// Always evaluates to [`TryReserveErrorKind::CapacityOverflow`].
+    /// 
+    /// This conversion is used when a layout error occurs during allocation.
     #[inline]
     fn from(_: LayoutError) -> Self {
         TryReserveErrorKind::CapacityOverflow
@@ -67,7 +82,9 @@ impl From<LayoutError> for TryReserveErrorKind {
 }
 
 impl From<LayoutError> for TryReserveError {
-    /// Always evaluates to [`TryReserveErrorKind::CapacityOverflow`].
+    /// Always evaluates to a `TryReserveError` with [`TryReserveErrorKind::CapacityOverflow`].
+    /// 
+    /// This conversion is used when a layout error occurs during allocation.
     fn from(_: LayoutError) -> Self {
         TryReserveError {
             kind: TryReserveErrorKind::CapacityOverflow,
@@ -77,6 +94,9 @@ impl From<LayoutError> for TryReserveError {
 
 #[cfg(not(feature = "no_std"))]
 impl From<std::collections::TryReserveError> for TryReserveError {
+    /// Converts a standard library `TryReserveError` into this crate's version.
+    /// 
+    /// Uses direct memory transmutation since the internal structure is identical.
     fn from(value: std::collections::TryReserveError) -> Self {
         unsafe { transmute::<std::collections::TryReserveError, TryReserveError>(value) }
     }
@@ -84,6 +104,9 @@ impl From<std::collections::TryReserveError> for TryReserveError {
 
 #[cfg(not(feature = "no_std"))]
 impl From<TryReserveErrorKind> for std::collections::TryReserveError {
+    /// Converts a `TryReserveErrorKind` into a standard library `TryReserveError`.
+    /// 
+    /// Creates a `TryReserveError` first, then converts it to the standard library version.
     fn from(value: TryReserveErrorKind) -> Self {
         TryReserveError { kind: value }.into()
     }
@@ -91,12 +114,18 @@ impl From<TryReserveErrorKind> for std::collections::TryReserveError {
 
 #[cfg(not(feature = "no_std"))]
 impl From<TryReserveError> for std::collections::TryReserveError {
+    /// Converts this crate's `TryReserveError` into a standard library version.
+    /// 
+    /// Uses direct memory transmutation since the internal structure is identical.
     fn from(val: TryReserveError) -> Self {
         unsafe { transmute::<TryReserveError, std::collections::TryReserveError>(val) }
     }
 }
 
 impl Display for TryReserveError {
+    /// Formats the error message for display.
+    /// 
+    /// Provides information about why the allocation failed.
     fn fmt(
         &self,
         fmt: &mut core::fmt::Formatter<'_>,
@@ -126,4 +155,7 @@ impl Display for TryReserveError {
 //    fn spec_extend(&mut self, iter: I);
 //}
 
+/// Implements the standard error trait for `TryReserveError`.
+/// 
+/// This enables using this error type with standard error handling mechanisms.
 impl core::error::Error for TryReserveError {}
