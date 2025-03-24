@@ -12,7 +12,7 @@ pub trait TryReserveErrorExtension {
     fn kind(self) -> TryReserveErrorKind;
 }
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 impl TryReserveErrorExtension for std::collections::TryReserveError {
     fn to_crate_error(self) -> TryReserveError {
         TryReserveError::from(self)

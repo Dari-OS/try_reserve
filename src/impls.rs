@@ -1,4 +1,4 @@
-#![cfg(not(feature = "no_std"))]
+#![cfg(feature = "std")]
 
 //! # Impls
 //!

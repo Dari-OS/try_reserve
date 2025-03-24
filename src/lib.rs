@@ -1,9 +1,9 @@
-#![cfg_attr(feature = "no_std", no_std)]
+#![cfg_attr(not(feature = "std"), no_std)]
 //! Stable TryReserveError that exposes TryReserveErrorKind
 //!
 
 pub mod error;
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 mod impls;
 mod try_reserve;
 

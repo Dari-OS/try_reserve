@@ -2,7 +2,7 @@ use try_reserve::error::{TryReserveError, TryReserveErrorKind};
 use try_reserve::TryReserve;
 
 // Implementation tests for all standard library types
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 mod impl_tests {
 
     use super::*;
@@ -184,7 +184,7 @@ mod error_tests {
         }
     }
 
-    #[cfg(not(feature = "no_std"))]
+    #[cfg(feature = "std")]
     #[test]
     fn test_std_error_conversion() {
         let mut vec: Vec<i32> = Vec::new();
@@ -227,7 +227,7 @@ mod error_tests {
 }
 
 // Test custom collection implementations
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 mod custom_impl_tests {
     use super::*;
 
@@ -303,7 +303,7 @@ mod custom_impl_tests {
 }
 
 // Test edge cases
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 mod edge_case_tests {
     use super::*;
     use std::collections::HashMap;
@@ -363,7 +363,7 @@ mod edge_case_tests {
 }
 
 // Tests for feature flag no_std
-#[cfg(feature = "no_std")]
+#[cfg(not(feature = "std"))]
 mod no_std_tests {
     use try_reserve::error::{TryReserveError, TryReserveErrorKind};
 

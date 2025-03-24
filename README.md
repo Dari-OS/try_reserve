@@ -19,9 +19,9 @@ This allows for easier and unified creation of custom collections that need to r
 
 ## Features
 
-- `no_std` support via feature flag
+- `no_std` support by default
 - Full compatibility with std's `TryReserveError` when available using `tansmutation`
-- Complete integration with already existing types inside the std that use `try_reserve()`
+- Complete integration with already existing types inside the std that use `try_reserve()` if the `std` flag is turned on
 
 ## Usage
 
@@ -29,7 +29,14 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-try_reserve = "0.1"
+try_reserve = "0.2" # No std
+```
+
+Or with the std integrations:
+
+```toml
+[dependencies]
+try_reserve = { version = "0.2", features = ["std"] }
 ```
 
 ### Basic usage
@@ -58,13 +65,13 @@ fn example() -> Result<(), TryReserveError> {
 }
 ```
 
-### With `no_std`
+### With `std`
 
-To use this crate in a `no_std` environment, enable the `no_std` feature:
+To use this crate in a `std` environment, enable the `no_std` feature:
 
 ```toml
 [dependencies]
-try_reserve = { version = "0.1", features = ["no_std"] }
+try_reserve = { version = "0.2", features = ["std"] }
 ```
 
 ## Error Types
@@ -82,7 +89,7 @@ An enum with the following variants:
 
 ## Conversions
 
-When not in a `no_std` environment, the crate provides conversions between its error types and the standard library's error types:
+When in a `std` environment, the crate provides conversions between its error types and the standard library's error types:
 
 ```rust
 use try_reserve::error::TryReserveError;

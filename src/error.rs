@@ -3,11 +3,11 @@ use core::{
     fmt::Display,
 };
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 use core::mem::transmute;
 
 /// The error type for `try_reserve` methods.
-/// 
+///
 /// This error is returned when memory allocation fails or when the capacity
 /// exceeds collection-specific limits.
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -24,18 +24,18 @@ impl TryReserveError {
     }
 
     /// Converts a standard library `TryReserveError` into this crate's version.
-    /// 
+    ///
     /// This is only available when the `no_std` feature is not enabled.
-    #[cfg(not(feature = "no_std"))]
+    #[cfg(feature = "std")]
     pub fn from_std(error: std::collections::TryReserveError) -> Self {
         Self::from(error)
     }
 
     /// Converts a `Result` containing a standard library `TryReserveError` into a `Result`
     /// with this crate's version of `TryReserveError`.
-    /// 
+    ///
     /// This is only available when the `no_std` feature is not enabled.
-    #[cfg(not(feature = "no_std"))]
+    #[cfg(feature = "std")]
     pub fn from_std_result<T>(
         result: Result<T, std::collections::TryReserveError>,
     ) -> Result<T, Self> {
@@ -59,6 +59,8 @@ pub enum TryReserveErrorKind {
         /// Reserved field for future compatibility with the standard library.
         /// This aligns with an RFC for future allocator error handling:
         /// https://github.com/rust-lang/wg-allocators/issues/23
+        /// Ensures compatibility when in std environment
+        #[cfg(feature = "std")]
         non_exhaustive: (),
     },
 }
@@ -73,7 +75,7 @@ impl From<TryReserveErrorKind> for TryReserveError {
 
 impl From<LayoutError> for TryReserveErrorKind {
     /// Always evaluates to [`TryReserveErrorKind::CapacityOverflow`].
-    /// 
+    ///
     /// This conversion is used when a layout error occurs during allocation.
     #[inline]
     fn from(_: LayoutError) -> Self {
@@ -83,7 +85,7 @@ impl From<LayoutError> for TryReserveErrorKind {
 
 impl From<LayoutError> for TryReserveError {
     /// Always evaluates to a `TryReserveError` with [`TryReserveErrorKind::CapacityOverflow`].
-    /// 
+    ///
     /// This conversion is used when a layout error occurs during allocation.
     fn from(_: LayoutError) -> Self {
         TryReserveError {
@@ -92,30 +94,30 @@ impl From<LayoutError> for TryReserveError {
     }
 }
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 impl From<std::collections::TryReserveError> for TryReserveError {
     /// Converts a standard library `TryReserveError` into this crate's version.
-    /// 
+    ///
     /// Uses direct memory transmutation since the internal structure is identical.
     fn from(value: std::collections::TryReserveError) -> Self {
         unsafe { transmute::<std::collections::TryReserveError, TryReserveError>(value) }
     }
 }
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 impl From<TryReserveErrorKind> for std::collections::TryReserveError {
     /// Converts a `TryReserveErrorKind` into a standard library `TryReserveError`.
-    /// 
+    ///
     /// Creates a `TryReserveError` first, then converts it to the standard library version.
     fn from(value: TryReserveErrorKind) -> Self {
         TryReserveError { kind: value }.into()
     }
 }
 
-#[cfg(not(feature = "no_std"))]
+#[cfg(feature = "std")]
 impl From<TryReserveError> for std::collections::TryReserveError {
     /// Converts this crate's `TryReserveError` into a standard library version.
-    /// 
+    ///
     /// Uses direct memory transmutation since the internal structure is identical.
     fn from(val: TryReserveError) -> Self {
         unsafe { transmute::<TryReserveError, std::collections::TryReserveError>(val) }
@@ -124,7 +126,7 @@ impl From<TryReserveError> for std::collections::TryReserveError {
 
 impl Display for TryReserveError {
     /// Formats the error message for display.
-    /// 
+    ///
     /// Provides information about why the allocation failed.
     fn fmt(
         &self,
@@ -156,6 +158,6 @@ impl Display for TryReserveError {
 //}
 
 /// Implements the standard error trait for `TryReserveError`.
-/// 
+///
 /// This enables using this error type with standard error handling mechanisms.
 impl core::error::Error for TryReserveError {}
