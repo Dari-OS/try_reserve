@@ -59,8 +59,6 @@ pub enum TryReserveErrorKind {
         /// Reserved field for future compatibility with the standard library.
         /// This aligns with an RFC for future allocator error handling:
         /// https://github.com/rust-lang/wg-allocators/issues/23
-        /// Ensures compatibility when in std environment
-        #[cfg(feature = "std")]
         non_exhaustive: (),
     },
 }
